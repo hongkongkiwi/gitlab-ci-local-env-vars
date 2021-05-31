@@ -18,7 +18,7 @@ random() {
 [ ! -z "$CI_DEPLOY_FREEZE" ] && export CI_DEPLOY_USER=${CI_DEPLOY_USER:-"$(git log -1 --pretty=format:'%an')"}
 export CI_COMMIT_TIMESTAMP=${CI_COMMIT_TIMESTAMP:-"$(git log -1 --format="%cd" --date="iso8601-strict")"}
 export CI_COMMIT_MESSAGE=${CI_COMMIT_MESSAGE:-"$(git log -1 --pretty=%B)"}
-[ "$(echo "$CI_COMMIT_MESSAGE" | wc -)" -gt 1000 ] && export CI_COMMIT_DESCRIPTION=${CI_COMMIT_DESCRIPTION:-"$(echo "$CI_COMMIT_MESSAGE" | tail -n+2)"}  || export CI_COMMIT_DESCRIPTION=${CI_COMMIT_DESCRIPTION:-"$CI_COMMIT_MESSAGE"}
+[ "$(echo "$CI_COMMIT_MESSAGE" | wc -c)" -gt 1000 ] && export CI_COMMIT_DESCRIPTION=${CI_COMMIT_DESCRIPTION:-"$(echo "$CI_COMMIT_MESSAGE" | tail -n+2)"}  || export CI_COMMIT_DESCRIPTION=${CI_COMMIT_DESCRIPTION:-"$CI_COMMIT_MESSAGE"}
 export CI_COMMIT_TITLE=${CI_COMMIT_TITLE:-"$(echo "$CI_COMMIT_MESSAGE" | head -n1)"}
 export CI_COMMIT_AUTHOR=${CI_COMMIT_AUTHOR:-"$(git log -1 --pretty=format:'%an') <$(git log -1 --pretty=format:'%ae')>"}
 export CI_PROJECT_DIR=${CI_PROJECT_DIR:-"$(git rev-parse --show-toplevel)"}
