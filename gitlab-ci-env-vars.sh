@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 CURRENT_DIR="$PWD"
-CHANGE_TO_DIR="$1"
 
 random() {
   UPPER=${UPPER:-100}
@@ -9,8 +8,9 @@ random() {
   echo $(($RANDOM_NUMBER % $UPPER))
 }
 
-[ ! -z "$CHANGE_TO_DIR" ] && cd "$CHANGE_TO_DIR"
+[ ! -z "$CI_PROJECT_DIR" -a -d "$CI_PROJECT_DIR" ] && cd "$CI_PROJECT_DIR"
 
+export CI_PROJECT_DIR=${CI_PROJECT_DIR:-"$(git rev-parse --show-toplevel)"}
 #export CI=${CI:-"true"}
 #export CI_DEBUG_TRACE=${CI_DEBUG_TRACE:-"true"}
 #export CI_DEPLOY_FREEZE=${CI_DEPLOY_FREEZE:-"true"}
@@ -22,7 +22,6 @@ export CI_COMMIT_MESSAGE=${CI_COMMIT_MESSAGE:-"$(git log -1 --pretty=%B)"}
 [ "$(echo "$CI_COMMIT_MESSAGE" | wc -c)" -gt 1000 ] && export CI_COMMIT_DESCRIPTION=${CI_COMMIT_DESCRIPTION:-"$(echo "$CI_COMMIT_MESSAGE" | tail -n+2)"}  || export CI_COMMIT_DESCRIPTION=${CI_COMMIT_DESCRIPTION:-"$CI_COMMIT_MESSAGE"}
 export CI_COMMIT_TITLE=${CI_COMMIT_TITLE:-"$(echo "$CI_COMMIT_MESSAGE" | head -n1)"}
 export CI_COMMIT_AUTHOR=${CI_COMMIT_AUTHOR:-"$(git log -1 --pretty=format:'%an') <$(git log -1 --pretty=format:'%ae')>"}
-export CI_PROJECT_DIR=${CI_PROJECT_DIR:-"$(git rev-parse --show-toplevel)"}
 export CI_COMMIT_SHA=${CI_COMMIT_SHA:-"$(git rev-parse HEAD)"}
 export CI_COMMIT_SHORT_SHA=${CI_COMMIT_SHORT_SHA:-"$(git rev-parse --short HEAD)"}
 export CI_COMMIT_BEFORE_SHA=${CI_COMMIT_BEFORE_SHA:-"$(git rev-parse ${CI_COMMIT_SHA}^1)"}
@@ -67,8 +66,8 @@ export CI_ENVIRONMENT_SLUG=${CI_ENVIRONMENT_SLUG:-"$(echo "$CI_ENVIRONMENT_NAME"
 export CI_ENVIRONMENT_URL=${CI_ENVIRONMENT_URL:-""}
 export CI_REGISTRY_USER=${CI_REGISTRY_USER:-""}
 
-[ ! -z "$CHANGE_TO_DIR" ] && cd "$CURRENT_DIR"
+cd "$CURRENT_DIR"
 
 # If this script is not being sourced print out the variables
 (return 0 2>/dev/null) && SOURCED=1 || SOURCED=0
-[ "$SOURCED" -eq 0 ] && printenv | grep "CI_"
+[ "$SOURCED" -eq 0 ] && printenv | grep "CI_" || true
