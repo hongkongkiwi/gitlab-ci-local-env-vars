@@ -8,7 +8,7 @@ random() {
   echo $(($RANDOM_NUMBER % $UPPER))
 }
 
-[ ! -z "$CI_PROJECT_DIR" -a -d "$CI_PROJECT_DIR" ] && cd "$CI_PROJECT_DIR"
+[ ! -z "$CI_PROJECT_DIR" -a -d "$CI_PROJECT_DIR/.git" ] && cd "$CI_PROJECT_DIR"
 
 export CI_PROJECT_DIR=${CI_PROJECT_DIR:-"$(git rev-parse --show-toplevel)"}
 #export CI=${CI:-"true"}
@@ -26,7 +26,7 @@ export CI_COMMIT_SHA=${CI_COMMIT_SHA:-"$(git rev-parse HEAD)"}
 export CI_COMMIT_SHORT_SHA=${CI_COMMIT_SHORT_SHA:-"$(git rev-parse --short HEAD)"}
 export CI_COMMIT_BEFORE_SHA=${CI_COMMIT_BEFORE_SHA:-"$(git rev-parse ${CI_COMMIT_SHA}^1)"}
 export CI_COMMIT_REF_NAME=${CI_COMMIT_REF_NAME:-"$(git rev-parse --abbrev-ref HEAD)"}
-export CI_COMMIT_REF_SLUG=${CI_COMMIT_REF_SLUG:-"$(echo "$CI_COMMIT_REF_NAME" | tr '[[:upper:]]' '[[:lower:]]' | sed 's|[^a-z0-9]|-|g')"}
+export CI_COMMIT_REF_SLUG=${CI_COMMIT_REF_SLUG:-"$(echo "${CI_COMMIT_REF_NAME:0:63}" | tr '[[:upper:]]' '[[:lower:]]' | sed 's|[^a-z0-9]|-|g' | sed -e 's/^-*//' -e 's/-*$//')"}
 export CI_COMMIT_TAG=${CI_COMMIT_TAG:-"$(git tag --points-at HEAD)"}
 export CI_PROJECT_URL=${CI_PROJECT_URL:-"$(git remote get-url origin --push | sed -r 's:git@([^/]+)\:(.*\.git):https\://\1/\2:g' | sed 's|\.git$||')"}
 export CI_REPOSITORY_URL=${CI_REPOSITORY_URL:-"$(git remote get-url origin --push | sed -r 's:git@([^/]+)\:(.*\.git):https\://\1/\2:g')"}
@@ -62,7 +62,7 @@ export CI_SERVER_VERSION_PATCH=${CI_SERVER_VERSION_PATCH:-"0"}
 export CI_SERVER_VERSION=${CI_SERVER_VERSION:-"${CI_SERVER_VERSION_MAJOR}.${CI_SERVER_VERSION_MINOR}.${CI_SERVER_VERSION_PATCH}"}
 export CI_API_V4_URL=${CI_API_V4_URL:-"${CI_SERVER_URL}/api/v4"}
 export CI_ENVIRONMENT_NAME=${CI_ENVIRONMENT_NAME:-""}
-export CI_ENVIRONMENT_SLUG=${CI_ENVIRONMENT_SLUG:-"$(echo "$CI_ENVIRONMENT_NAME" | tr '[[:upper:]]' '[[:lower:]]' | sed 's|[^a-z0-9]|-|g')"}
+export CI_ENVIRONMENT_SLUG=${CI_ENVIRONMENT_SLUG:-"$(echo "${CI_ENVIRONMENT_NAME:0:24}" | tr '[[:upper:]]' '[[:lower:]]' | sed 's|[^a-z0-9]|-|g')"}
 export CI_ENVIRONMENT_URL=${CI_ENVIRONMENT_URL:-""}
 export CI_REGISTRY_USER=${CI_REGISTRY_USER:-""}
 
